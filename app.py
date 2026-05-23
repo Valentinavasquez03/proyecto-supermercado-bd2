@@ -1,13 +1,18 @@
 from flask import Flask, render_template
 import database as dbase
-
-app = Flask(__name__)
+from routes.productos import productos
+from routes.ventas import ventas
 # Clave obligatoria en Flask para habilitar sesiones y mensajes flash informativos
-app.secret_key = "clave_secreta_compartida_supermercado"
+app = Flask(__name__)
+
 
 # Inicialización de la Base de Datos global para el grupo
 db = dbase.dbConnection()
 
+app.secret_key = "clave_secreta_compartida_supermercado"
+
+app.register_blueprint(productos, url_prefix='/productos')
+app.register_blueprint(ventas, url_prefix='/ventas')
 
 # =================================================================
 # SECCIÓN DE REGISTRO DE BLUEPRINTS

@@ -1,0 +1,8 @@
+POST http://127.0.0.1:5000/productos/
+Content-Type: application/json
+
+{
+    "nombre": "Coca Cola",
+    "precio": 10,
+    "stock": 50
+}
