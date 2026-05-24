@@ -2,6 +2,7 @@ from flask import Flask, render_template
 import database as dbase
 from routes.productos import productos
 from routes.ventas import ventas
+from routes.login import login
 # Clave obligatoria en Flask para habilitar sesiones y mensajes flash informativos
 app = Flask(__name__)
 
@@ -13,7 +14,7 @@ app.secret_key = "clave_secreta_compartida_supermercado"
 
 app.register_blueprint(productos, url_prefix='/productos')
 app.register_blueprint(ventas, url_prefix='/ventas')
-
+app.register_blueprint(login, url_prefix='/login')
 # =================================================================
 # SECCIÓN DE REGISTRO DE BLUEPRINTS
 # Cada integrante importará y registrará sus rutas aquí abajo:

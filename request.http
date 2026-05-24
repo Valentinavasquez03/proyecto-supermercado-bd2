@@ -6,3 +6,21 @@ Content-Type: application/json
     "precio": 10,
     "stock": 50
 }
+###
+POST http://127.0.0.1:5000/ventas/
+Content-Type: application/json
+
+{
+    "producto": "Coca Cola",
+    "cantidad": 2,
+    "total": 20
+}
+###
+
+POST http://127.0.0.1:5000/login/
+Content-Type: application/json
+
+{
+    "usuario": "admin",
+    "password": "1234"
+}
