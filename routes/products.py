@@ -4,19 +4,16 @@ import database as dbase
 # Crear el modulo independiente para los productos
 products_bp = Blueprint('products', __name__)
 
+# --- TU HU02: REGISTRAR PRODUCTOS ---
 @products_bp.route('/products/new', methods=['GET', 'POST'])
 def create_product():
     if request.method == 'POST':
-        # Conectamos a la DB justo aqui
         db = dbase.dbConnection()
-
-        # Recibir unicamente los datos esenciales sin imagen ni descripcion
         nombre = request.form.get('nombre', '').strip()
         precio_raw = request.form.get('precio')
         stock_raw = request.form.get('stock')
         categoria = request.form.get('categoria')
 
-        # Validar campos obligatorios de la HU02
         if not nombre or not precio_raw or not stock_raw or not categoria:
             flash("Error: Los campos con asterisco son obligatorios.", "danger")
             return redirect(url_for('products.create_product'))
@@ -24,7 +21,6 @@ def create_product():
         precio = float(precio_raw)
         stock = int(stock_raw)
 
-        # Guardar el documento en MongoDB de forma directa y limpia
         if db is not None:
             db['productos'].insert_one({
                 "nombre": nombre,
@@ -39,3 +35,23 @@ def create_product():
         return redirect(url_for('products.create_product'))
 
     return render_template('create_product.html')
+
+
+# --- TU HU05: BUSCAR PRODUCTOS ---
+@products_bp.route('/products/search', methods=['GET'])
+def search_products():
+    db = dbase.dbConnection()
+    query_nombre = request.args.get('nombre', '').strip()
+    query_categoria = request.args.get('categoria', '').strip()
+    productos_encontrados = []
+    
+    if db is not None:
+        filtro = {}
+        if query_nombre:
+            filtro['nombre'] = {'$regex': query_nombre, '$options': 'i'}
+        if query_categoria:
+            filtro['categoria'] = query_categoria
+            
+        productos_encontrados = list(db['productos'].find(filtro))
+        
+    return render_template('search_product.html', productos=productos_encontrados, q_nombre=query_nombre, q_categoria=query_categoria)
