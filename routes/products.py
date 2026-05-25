@@ -1,22 +1,28 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 import database as dbase
 
-# Crear el modulo independiente para los productos
 products_bp = Blueprint('products', __name__)
 
-# --- TU HU02: REGISTRAR PRODUCTOS ---
+# --- REGISTRAR PRODUCTOS (HU02 ampliada según enunciado) ---
 @products_bp.route('/products/new', methods=['GET', 'POST'])
 def create_product():
     if request.method == 'POST':
         db = dbase.dbConnection()
         nombre = request.form.get('nombre', '').strip()
+        descripcion = request.form.get('descripcion', '').strip()
         precio_raw = request.form.get('precio')
         stock_raw = request.form.get('stock')
         categoria = request.form.get('categoria')
+        imagen = request.form.get('imagen', '').strip()
 
+        # Validación de campos obligatorios mínimos
         if not nombre or not precio_raw or not stock_raw or not categoria:
             flash("Error: Los campos con asterisco son obligatorios.", "danger")
             return redirect(url_for('products.create_product'))
+
+        # Si no pone imagen, usamos una silueta por defecto como exige el enunciado
+        if not imagen:
+            imagen = "https://via.placeholder.com/150?text=Sin+Imagen"
 
         precio = float(precio_raw)
         stock = int(stock_raw)
@@ -24,11 +30,13 @@ def create_product():
         if db is not None:
             db['productos'].insert_one({
                 "nombre": nombre,
+                "descripcion": descripcion,
                 "precio": precio,
                 "stock": stock,
-                "categoria": categoria
+                "categoria": categoria,
+                "imagen": imagen
             })
-            flash("Producto guardado correctamente.", "success")
+            flash("Producto guardado correctamente en el inventario.", "success")
         else:
             flash("Error: Base de datos no disponible.", "danger")
 
@@ -37,7 +45,7 @@ def create_product():
     return render_template('create_product.html')
 
 
-# --- TU HU05: BUSCAR PRODUCTOS ---
+# --- BUSCAR Y LISTAR PRODUCTOS (HU05 ampliada) ---
 @products_bp.route('/products/search', methods=['GET'])
 def search_products():
     db = dbase.dbConnection()

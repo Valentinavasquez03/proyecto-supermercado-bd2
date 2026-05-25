@@ -40,9 +40,10 @@
 
             <h5 class="h6 text-dark mb-3">Resultados obtenidos:</h5>
             
-            <table class="table table-bordered table-striped small">
+            <table class="table table-bordered table-striped small align-middle">
                 <thead class="table-light">
                     <tr>
+                        <th style="width: 70px;">Imagen</th>
                         <th>Nombre</th>
                         <th>Precio ($)</th>
                         <th>Stock</th>
@@ -52,6 +53,9 @@
                 <tbody>
                     {% for producto in productos %}
                     <tr>
+                        <td>
+                            <img src="{{ producto.imagen }}" alt="Foto" style="width: 50px; height: 50px; object-fit: cover;" class="rounded border">
+                        </td>
                         <td>{{ producto.nombre }}</td>
                         <td>{{ producto.precio }}</td>
                         <td>{{ producto.stock }}</td>
@@ -59,7 +63,7 @@
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="4" class="text-center text-muted py-3">No se encontraron productos en el inventario.</td>
+                        <td colspan="5" class="text-center text-muted py-3">No se encontraron productos en el inventario.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
