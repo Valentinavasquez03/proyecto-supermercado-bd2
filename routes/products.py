@@ -55,3 +55,12 @@ def search_products():
         productos_encontrados = list(db['productos'].find(filtro))
         
     return render_template('search_product.html', productos=productos_encontrados, q_nombre=query_nombre, q_categoria=query_categoria)
+
+# --- HU10: VISUALIZAR PRODUCTOS CON BAJO STOCK ---
+@products_bp.route('/products/low-stock', methods=['GET'])
+def low_stock():
+    db = dbase.dbConnection()
+    productos_bajo_stock = []
+    if db is not None:
+        productos_bajo_stock = list(db['productos'].find({"stock": {"$lt": 5}}))
+    return render_template('low_stock.html', productos=productos_bajo_stock)
