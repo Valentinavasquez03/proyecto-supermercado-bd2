@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 import database as dbase
 
+
 # Crear el modulo independiente para los productos
 products_bp = Blueprint('products', __name__)
 
@@ -36,6 +37,41 @@ def create_product():
 
     return render_template('create_product.html')
 
+# --- HU03: ACTUALIZAR STOCK ---
+@products_bp.route('/products/update-stock', methods=['GET', 'POST'])
+def update_stock():
+    db = dbase.dbConnection()
+    productos = []
+    if db is not None:
+        productos = list(db['productos'].find())
+
+    if request.method == 'POST':
+        from bson import ObjectId
+        producto_id = request.form.get('producto_id')
+        nuevo_stock_raw = request.form.get('nuevo_stock')
+
+        if not producto_id or not nuevo_stock_raw:
+            flash("Error: Selecciona un producto e ingresa el stock.", "danger")
+            return redirect(url_for('products.update_stock'))
+
+        nuevo_stock = int(nuevo_stock_raw)
+
+        if nuevo_stock < 0:
+            flash("Error: El stock no puede ser negativo.", "danger")
+            return redirect(url_for('products.update_stock'))
+
+        if db is not None:
+            db['productos'].update_one(
+                {"_id": ObjectId(producto_id)},
+                {"$set": {"stock": nuevo_stock}}
+            )
+            flash("Stock actualizado correctamente.", "success")
+        else:
+            flash("Error: Base de datos no disponible.", "danger")
+
+        return redirect(url_for('products.update_stock'))
+
+    return render_template('update_stock.html', productos=productos)
 
 # --- TU HU05: BUSCAR PRODUCTOS ---
 @products_bp.route('/products/search', methods=['GET'])
