@@ -15,6 +15,10 @@ db = dbase.dbConnection()
 from routes.products import products_bp
 app.register_blueprint(products_bp)
 
+from routes.suppliers import suppliers_bp
+app.register_blueprint(suppliers_bp)
+
+
 
 # Ruta raíz: Al entrar a http://127.0.0.1:5000 te mandará directo al registro
 @app.route('/')
