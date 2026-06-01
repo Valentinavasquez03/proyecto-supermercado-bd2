@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
 app.register_blueprint(auth_bp)
-app.register_blueprint(products_bp)
+app.register_blueprint(products_bp, url_prefix='/supermarket')
 app.register_blueprint(sales_bp)
 app.register_blueprint(suppliers_bp)
 
