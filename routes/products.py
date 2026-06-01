@@ -35,7 +35,7 @@ def create_product():
 def search_products():
     db = dbase.dbConnection()
     query_nombre = request.args.get('nombre', '').strip()
-    query_categoria = request.args.get('categoria', '').strip()
+    query_categoria = request.args.get('categoria', 'Lacteos').strip()
     query_precio_max = request.args.get('precio_max', '').strip()
     
     filtro = {}
@@ -82,3 +82,30 @@ def low_stock_products():
     db = dbase.dbConnection()
     criticos = list(db['productos'].find({"stock": {"$lte": 5}})) if db is not None else []
     return render_template('low_stock.html', productos=criticos)
+
+
+
+
+
+@products_bp.route('/products/update-stock', methods=['GET', 'POST'])
+def update_stock():
+    db = dbase.dbConnection()
+
+    if request.method == 'POST':
+        producto_id = request.form.get('producto_id')
+        nuevo_stock_raw = request.form.get('nuevo_stock')
+
+        if producto_id and nuevo_stock_raw is not None:
+            nuevo_stock = int(nuevo_stock_raw)
+            db['productos'].update_one(
+                {"_id": ObjectId(producto_id)},
+                {"$set": {"stock": nuevo_stock}}
+            )
+            flash("Stock actualizado correctamente.", "success")
+        else:
+            flash("Datos incompletos. Intenta de nuevo.", "danger")
+
+        return redirect(url_for('products.update_stock'))
+
+    productos = list(db['productos'].find()) if db is not None else []
+    return render_template('update_stock.html', productos=productos)

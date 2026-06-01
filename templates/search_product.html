@@ -14,8 +14,8 @@
         <div class="col-md-3">
             <label class="form-label">Categoría</label>
             <select class="form-select form-dark" name="categoria">
-                <option value="">Todas</option>
-                <option value="Lacteos" {% if q_categoria == 'Lacteos' %}selected{% endif %}>Lácteos</option>
+                <option value="">Lacteos</option>
+                <option value="Todas" {% if q_categoria == 'Todas' %}selected{% endif %}>Todas</option>
                 <option value="Carnes" {% if q_categoria == 'Carnes' %}selected{% endif %}>Carnes</option>
                 <option value="Abarrotes" {% if q_categoria == 'Abarrotes' %}selected{% endif %}>Abarrotes</option>
             </select>
