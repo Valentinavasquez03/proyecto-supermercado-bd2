@@ -7,17 +7,27 @@
 </head>
 <body class="p-4">
 
-    <div class="container mb-4" style="max-width: 700px;">
+    <div class="container mb-4" style="max-width: 900px;">
         <div class="d-flex justify-content-around border-bottom pb-2">
             <a href="/products/new" class="text-secondary text-decoration-none">Registrar Producto</a>
             <a href="/products/search" class="fw-bold text-dark text-decoration-none">Buscar Productos</a>
         </div>
     </div>
 
-    <div class="container" style="max-width: 700px;">
+    <div class="container" style="max-width: 900px;">
         <div class="border p-4 rounded bg-white">
             <h2 class="h4 text-dark">Panel de Búsqueda de Productos</h2>
             <hr>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-secondary py-2" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
 
             <form action="/products/search" method="GET" class="row g-3 mb-4">
                 <div class="col-md-6">
@@ -40,26 +50,43 @@
 
             <h5 class="h6 text-dark mb-3">Resultados obtenidos:</h5>
             
-            <table class="table table-bordered table-striped small">
+            <table class="table table-bordered table-striped small align-middle">
                 <thead class="table-light">
                     <tr>
+                        <th style="width: 70px;">Imagen</th>
                         <th>Nombre</th>
                         <th>Precio ($)</th>
                         <th>Stock</th>
                         <th>Categoría</th>
+                        <th style="width: 250px;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for producto in productos %}
                     <tr>
-                        <td>{{ producto.nombre }}</td>
-                        <td>{{ producto.precio }}</td>
+                        <td>
+                            <img src="{{ producto.imagen }}" alt="Foto" style="width: 50px; height: 50px; object-fit: cover;" class="rounded border">
+                        </td>
+                        <td>
+                            <strong>{{ producto.nombre }}</strong>
+                            {% if producto.descripcion %}
+                                <br><span class="text-muted text-truncate d-inline-block" style="max-width: 150px;">{{ producto.descripcion }}</span>
+                            {% endif %}
+                        </td>
+                        <td>${{ producto.precio }}</td>
                         <td>{{ producto.stock }}</td>
                         <td>{{ producto.categoria }}</td>
+                        <td>
+                            <form action="/products/{{ producto._id }}/discount" method="POST" class="d-inline-flex mb-1 w-100">
+                                <input type="number" name="porcentaje" class="form-control form-control-sm me-1" style="width: 60px;" placeholder="%" min="1" max="99" required>
+                                <button type="submit" class="btn btn-sm btn-outline-secondary py-0">Descuento</button>
+                                <a href="/products/{{ producto._id }}/delete" class="btn btn-sm btn-outline-danger ms-2 py-0">Eliminar</a>
+                            </form>
+                        </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="4" class="text-center text-muted py-3">No se encontraron productos en el inventario.</td>
+                        <td colspan="6" class="text-center text-muted py-3">No se encontraron productos en el inventario.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
